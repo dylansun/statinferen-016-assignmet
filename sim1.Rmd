@@ -1,0 +1,48 @@
+---
+title: "Assignment Part 1"
+output: pdf_document
+---
+## Introduction
+The exponential distribution can be simulated in R with rexp(n, lambda) where lambda is the rate parameter. The mean of exponential distribution is 1/lambda and the standard deviation is also also 1/lambda. Set lambda = 0.2 for all of the simulations. 
+
+In this simulation, you will investigate the distribution of averages of 40 exponential(0.2)s. Note that you will need to do a thousand or so simulated averages of 40 exponentials.
+
+Illustrate via simulation and associated explanatory text the properties of the distribution of the mean of 40 exponential(0.2)s.  You should
+### Q1: Show where the distribution is centered at and compare it to the theoretical center of the distribution.
+```{r}
+set.seed(1)
+n <- 40
+lambda <- .2
+nsim <-1000
+sim <- replicate(nsim, rexp(n,.2))
+mns <- colMeans(sim)
+hist(mns, main="Histogram of mean 40 exponential(.2)")
+```
+```{r}
+center <- mean(sim)
+center
+```
+we see the distribution is centered at  4.990025,which is approximatley equal to 5.
+
+### Q2. Show how variable it is and compare it to the theoretical variance of the distribution.
+
+The theoretical variance of exponential distribution with $\lambda = .2$ is $S_{The}=\frac{1}{\lambda}=5$.
+The theoretical variance of the distribution of the mean of 40 exponential distribution with $\lambda = .2$ is $S_{The.mean} = \frac{S_{The}^2}{n} = \frac{5}{8}$
+```{r}
+(1/lambda^2) / n
+```
+The variance of the simulations
+```{r}
+var(mns)
+```
+They are very close.
+
+### Q3. Show that the distribution is approximately normal.
+
+As we know when n is large and lambda is small, the exponential distribution can be approxiately regarded as normal distribution as CLT indicates. 
+Here we use the Quantile-Quantile plot to compare the distribution of mean exponential with distribution of exponential.
+```{r}
+qqplot(rexp(nsim, lambda),sim, col="blue", main="exponential QQ with simulation", xlab="THE Quantiles", ylab="simulation quantile")
+abline(0,1,col="red")
+```
+The result is as expected, since the blue part is around the red line.
