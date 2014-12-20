@@ -3,21 +3,60 @@ title: "Assignment Part 2"
 output: pdf_document
 ---
 ## Introduction
+
 Now in the second portion of the class, we're going to analyze the ToothGrowth data in the R datasets package.
 
-* 1. Load the ToothGrowth data and perform some basic exploratory data analyses 
-Provide a basic summary of the data.
+### Dataset(ToothGrowth): The Effect of Vitamin C on Tooth Growth in Guinea Pigs
+
+Description: The response is the length of odontoblasts (teeth) in each of 10 guinea pigs at each of three dose levels of Vitamin C (0.5, 1, and 2 mg) with each of two delivery methods (orange juice or ascorbic acid).
+
+Format:
+A data frame with 60 observations on 3 variables.
+
+[,1]   len	 numeric	 Tooth length
+[,2]	 supp	 factor	 Supplement type (VC or OJ).
+[,3]	 dose	 numeric	 Dose in milligrams.
+
+### Basic Analysis
+First let's try to compare tooth lengths vs. the Vitamin C/orange juice dosage. From the figure, we know that Orange Juice seems to perform better at the 0.5mg dosages, but has a similar result to Vitamin C at the 2.0mg dosage.
+
 ```{r}
 library(datasets)
 data(ToothGrowth)
-head(ToothGrowth,5)
-str(ToothGrowth)
-summary(ToothGrowth)
+library(lattice)
+histogram(~len|supp, data=ToothGrowth)
+xyplot(len~dose|supp, data = ToothGrowth)
 ```
-Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose. (Only use the techniques from class, even if there's other approaches worth considering)
-State your conclusions and the assumptions needed for your conclusions. 
-Some criteria that you will be evaluated on
-Did you  perform an exploratory data analysis of at least a single plot or table highlighting basic features of the data?
-Did the student perform some relevant confidence intervals and/or tests?
-Were the results of the tests and/or intervals interpreted in the context of the problem correctly? 
-Did the student describe the assumptions needed for their conclusions?
+ 
+
+### Basic Summary
+The len increase as the doseage increase for both orange juice and Vitamin C.
+Orange juice has better performance than Vitamin C as the dosage is low.And also a better average performance.
+```{r}
+meanOJ <- mean(ToothGrowth[ToothGrowth$supp == "OJ",1])
+meanOJ
+meanVC <- mean(ToothGrowth[ToothGrowth$supp == "VC",1])
+meanVC
+```
+
+### Hypothesis
+Hypothesis 1: Orange juice and Vitamin C has the same performance.
+```{r}
+t1 <- t.test(len ~ supp, data=ToothGrowth)
+t1$statistic
+qt(.95,58)
+```
+
+Hypothesis 2: Orange juice and Vitanmin C has the same performance when the dosage is low
+```{r}
+sub <- ToothGrowth[ToothGrowth$dose == .5, ]
+t2 <- t.test(len ~ supp, data=sub)
+t2$statistic
+qt(.95,dim(sub)[1] -2)
+```
+
+### Conclusions for 
+
+H1 fails: since `r t1$statistic ` is above `r qt(.95,58)`
+
+H2 fails: since `r t2$statistic ` is above `r qt(.95,18)`
